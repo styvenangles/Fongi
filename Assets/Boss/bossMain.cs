@@ -86,39 +86,20 @@ public class bossMain : MonoBehaviour
 */        }
         yield return null;
     }
-
-    private IEnumerator VerticalHit()
+    
+    public void TakeDamge(int damage)
     {
-        rand = Random.Range(0, 10);
-        if (rand < 5)
+        hpCurrent -= damage;
+
+        if (hpCurrent <= 0 )
         {
-        }
-        yield return null;
-    }
-
-    private IEnumerator PunchHit()
-    {
-        
-        yield return null;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Fongi"))
-        {
-            if (isPhased)
-            {
-                hitCount++;
-            }
-            hpCurrent -= 10;
+            Die();
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void Die()
     {
-        if (collision.gameObject.CompareTag("Fongi"))
-        {
-        }
+
     }
 
     // Start is called before the first frame update
@@ -132,8 +113,6 @@ public class bossMain : MonoBehaviour
     {
         if (hpCurrent > 0)
         {
-            StartCoroutine("VerticalHit");
-            StartCoroutine("PunchHit");
             if (isPhased)
             {
                 StopCoroutine("EnablePhase2");

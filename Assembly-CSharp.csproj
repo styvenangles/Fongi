@@ -53,12 +53,13 @@
     <UnityVersion>2020.3.21f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Fongi\InputMap\fongiControls.cs" />
-    <Compile Include="Assets\Fongi\fongiMain.cs" />
-    <Compile Include="Assets\Boss\bossMain.cs" />
     <Compile Include="Assets\Boss\bossAttacks.cs" />
     <Compile Include="Assets\Bandits - Pixel Art\Demo\Bandit.cs" />
+    <Compile Include="Assets\Fongi\InputMap\fongiControls.cs" />
+    <Compile Include="Assets\Fongi\fongiMain.cs" />
     <Compile Include="Assets\Bandits - Pixel Art\Demo\Sensor_Bandit.cs" />
+    <Compile Include="Assets\Boss\bossMain.cs" />
+    <Compile Include="Assets\Fongi\fongiAttack.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -12,11 +12,16 @@ public class fongiMain : MonoBehaviour
     private Rigidbody2D fongiBody;
     private SpriteRenderer fongiSprite;
 
+    private float maxHp = 100f;
+    public float currentHp;
     private float moveSpeed = 10;
     private float jumpVelocity = 25f;
+    private float dashPower = 5f;
+    private float directionHeaded = 0;
     private float moveValue;
     private bool flipX = false;
     private bool isJumping = false;
+    private bool hadDash = false;
 
     private void Awake()
     {
@@ -42,6 +47,16 @@ public class fongiMain : MonoBehaviour
         }
     }
 
+    void OnDash()
+    {
+        if (hadDash == false)
+        {
+            hadDash = true;
+            transform.position += new Vector3(directionHeaded, 0) * dashPower;
+            Invoke("setDash", 1);
+        }
+    }
+
     void OnJump(InputValue value)
     {
         if (isJumping == false)
@@ -49,6 +64,11 @@ public class fongiMain : MonoBehaviour
             fongiBody.velocity = Vector2.up * jumpVelocity;
         }
         
+    }
+
+    void setDash()
+    {
+        hadDash = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -70,13 +90,28 @@ public class fongiMain : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        currentHp = maxHp;
     }
 
     // Update is called once per frame
     void Update()
     {
+        directionHeaded = moveValue;
         transform.Translate(new Vector2(moveValue, 0) * moveSpeed * Time.deltaTime);
+    }
+    public void TakeDamge(int damage)
+    {
+        currentHp -= damage;
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+
     }
 
     private void FixedUpdate()

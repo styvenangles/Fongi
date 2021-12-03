@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/playerFongi/fongiControls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Fongi/InputMap/fongiControls.inputactions'
 
 using System;
 using System.Collections;
@@ -30,6 +30,22 @@ public class @FongiControls : IInputActionCollection, IDisposable
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""ae35063c-ed2f-427a-85c7-9237e708de4a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""971ad8eb-945d-4f9e-a98c-757993710cfd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""90185880-ea80-4a5c-82f2-67b122b16b1b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -123,6 +139,50 @@ public class @FongiControls : IInputActionCollection, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""28dbca3c-2520-419a-b339-a2ecd20cd1b0"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": ""MultiTap(tapDelay=0.25,pressPoint=0.25)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""fc48d074-5c13-47e8-90f9-a5e3f18c9b03"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""a9e19e6d-1eaf-4f49-b087-be5f81eb83bc"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2333eed7-a071-439d-97bd-9bbcbd9bfc18"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -133,6 +193,8 @@ public class @FongiControls : IInputActionCollection, IDisposable
         m_Movemement = asset.FindActionMap("Movemement", throwIfNotFound: true);
         m_Movemement_Horizontal = m_Movemement.FindAction("Horizontal", throwIfNotFound: true);
         m_Movemement_Jump = m_Movemement.FindAction("Jump", throwIfNotFound: true);
+        m_Movemement_Dash = m_Movemement.FindAction("Dash", throwIfNotFound: true);
+        m_Movemement_Attack = m_Movemement.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -184,12 +246,16 @@ public class @FongiControls : IInputActionCollection, IDisposable
     private IMovemementActions m_MovemementActionsCallbackInterface;
     private readonly InputAction m_Movemement_Horizontal;
     private readonly InputAction m_Movemement_Jump;
+    private readonly InputAction m_Movemement_Dash;
+    private readonly InputAction m_Movemement_Attack;
     public struct MovemementActions
     {
         private @FongiControls m_Wrapper;
         public MovemementActions(@FongiControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Horizontal => m_Wrapper.m_Movemement_Horizontal;
         public InputAction @Jump => m_Wrapper.m_Movemement_Jump;
+        public InputAction @Dash => m_Wrapper.m_Movemement_Dash;
+        public InputAction @Attack => m_Wrapper.m_Movemement_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Movemement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -205,6 +271,12 @@ public class @FongiControls : IInputActionCollection, IDisposable
                 @Jump.started -= m_Wrapper.m_MovemementActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_MovemementActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_MovemementActionsCallbackInterface.OnJump;
+                @Dash.started -= m_Wrapper.m_MovemementActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_MovemementActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_MovemementActionsCallbackInterface.OnDash;
+                @Attack.started -= m_Wrapper.m_MovemementActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_MovemementActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_MovemementActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_MovemementActionsCallbackInterface = instance;
             if (instance != null)
@@ -215,6 +287,12 @@ public class @FongiControls : IInputActionCollection, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -223,5 +301,7 @@ public class @FongiControls : IInputActionCollection, IDisposable
     {
         void OnHorizontal(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
