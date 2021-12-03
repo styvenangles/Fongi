@@ -8,8 +8,12 @@ public class bossAttacks : MonoBehaviour
     private Transform attackPunchPoint;
     private Transform attackVerticalPoint;
     private LayerMask playerLayer;
+    private AudioSource bossSounds;
 
     private Coroutine co;
+
+    [SerializeField] AudioClip soundStomp;
+    [SerializeField] AudioClip soundPunch;
 
     private int attackDamage;
     private float randTryAttack;
@@ -22,6 +26,7 @@ public class bossAttacks : MonoBehaviour
         playerLayer = LayerMask.GetMask("Fongi");
         attackPunchPoint = GameObject.Find("PunchHit").transform;
         attackVerticalPoint = GameObject.Find("VerticalHit").transform;
+        bossSounds = transform.GetComponent<AudioSource>();
     }
 
     // Start is called before the first frame update
@@ -36,11 +41,15 @@ public class bossAttacks : MonoBehaviour
         {
             if (randWhichHit >= 31F)
             {
+                bossSounds.clip = soundPunch;
+                bossSounds.Play();
                 Vector3 attackRange = new Vector3(1.5F, 1, 0);
                 attackDamage = 10;
                 co = StartCoroutine(performAttack(attackPunchPoint, attackRange, attackDamage, 3.5F));
             } else
             {
+                bossSounds.clip = soundStomp;
+                bossSounds.Play();
                 Vector3 attackRange = new Vector3(2, 2, 0);
                 attackDamage = 10;
                 co = StartCoroutine(performAttack(attackVerticalPoint, attackRange, attackDamage, 4F));
@@ -84,8 +93,8 @@ public class bossAttacks : MonoBehaviour
         if (isRandLock == false)
         {
             StartCoroutine(randOrg(0F, 100F));
-            Debug.Log(randTryAttack);
-            Debug.Log(randTryAttack <= 5F);
+           /* Debug.Log(randTryAttack);
+            Debug.Log(randTryAttack <= 5F);*/
             if (randTryAttack <= 5F)
             {
 /*                isRandLock = !isRandLock;
@@ -103,7 +112,7 @@ public class bossAttacks : MonoBehaviour
     {
         if (attackPunchPoint != null)
         {
-            Vector3 attackRange = new Vector3(1.5F, 1, 0);
+            Vector3 attackRange = new Vector3(3.5F, 2, 0);
             Gizmos.DrawWireCube(attackPunchPoint.position, attackRange);
         }
         else
@@ -113,7 +122,7 @@ public class bossAttacks : MonoBehaviour
 
         if (attackVerticalPoint != null)
         {
-            Vector3 attackRange = new Vector3(2, 2, 0);
+            Vector3 attackRange = new Vector3(4, 9, 0);
             Gizmos.DrawWireCube(attackVerticalPoint.position, attackRange);
         }
         else

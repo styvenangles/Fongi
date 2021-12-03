@@ -7,6 +7,9 @@ public class fongiAttack : MonoBehaviour
     private FongiControls fongiControls;
     public Transform attackPoint;
     private LayerMask enemiesLayer;
+    private AudioSource fongiSounds;
+
+    [SerializeField] AudioClip soundHit;
 
     private float attackRange = 0.5f;
     private int attackDamage = 10;
@@ -14,12 +17,15 @@ public class fongiAttack : MonoBehaviour
     private void Awake()
     {
         fongiControls = new FongiControls();
-        enemiesLayer = LayerMask.GetMask("Enemy"); 
+        enemiesLayer = LayerMask.GetMask("Enemy");
+        fongiSounds = transform.GetComponent<AudioSource>();
 
     }
 
     void OnAttack()
     {
+        fongiSounds.clip = soundHit;
+        fongiSounds.Play();
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemiesLayer);
 
         foreach(Collider2D enemy in hitEnemies)

@@ -54,12 +54,41 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Boss\bossAttacks.cs" />
-    <Compile Include="Assets\Bandits - Pixel Art\Demo\Bandit.cs" />
+    <Compile Include="Assets\Fongi\Inventory.cs" />
+    <Compile Include="Assets\Scenes\MainMenu.cs" />
     <Compile Include="Assets\Fongi\InputMap\fongiControls.cs" />
     <Compile Include="Assets\Fongi\fongiMain.cs" />
-    <Compile Include="Assets\Bandits - Pixel Art\Demo\Sensor_Bandit.cs" />
     <Compile Include="Assets\Boss\bossMain.cs" />
+    <Compile Include="Assets\Fongi\pickup.cs" />
+    <Compile Include="Assets\MobPatrol.cs" />
     <Compile Include="Assets\Fongi\fongiAttack.cs" />
+    <Compile Include="Assets\Scenes\PauseMenu.cs" />
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_MouseRotation.cs" />
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Shaders\Plexus\Plexus.cs" />
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_SnowOverTime.cs" />
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_DissolveOverTime.cs" />
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_ExampleReview.cs" />
+    <Compile Include="Assets\Fongi\Camera.cs" />
+    <Compile Include="Assets\Boss\bossEvents.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Edge Detection.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Grass Sway.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Blur.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Plexus\Plexus.compute" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Depth Mask Edge Detection.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Ocean.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Dissolve.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Plasma.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Outline.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Plexus\Plexus Line.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Snow.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Lava3D.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Force Field.shader" />
+    <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Simple Sine Wave.shader" />
+    <None Include="Assets\FlexibleCelShader\Shaders\CelNoOutline.shader" />
+    <None Include="Assets\FlexibleCelShader\Shaders\CelSilhouette.shader" />
+    <None Include="Assets\FlexibleCelShader\Shaders\CelOutline.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

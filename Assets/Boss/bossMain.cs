@@ -10,12 +10,16 @@ public class bossMain : MonoBehaviour
     private Rigidbody2D bossBody;
     private RaycastHit2D rayCastGen;
     private BoxCollider2D bossCollider;
+    private AudioSource bossSounds;
 
     [SerializeField] Rigidbody2D fongiBox;
 
+    [SerializeField] AudioClip soundHit;
+    [SerializeField] AudioClip soundDeath;
+
     private float hpMax = 100;
     public float hpCurrent;
-    private float impulsForce = -0.30F;
+    private float impulsForce = 5F;
     private float hitCount = 1;
     private float timeRemaining = 3.00F;
     private float rand;
@@ -31,9 +35,19 @@ public class bossMain : MonoBehaviour
         bossSprite = transform.GetComponent<SpriteRenderer>();
         bossBody = transform.GetComponent<Rigidbody2D>();
         bossCollider = transform.GetComponent<BoxCollider2D>();
+        bossSounds = transform.GetComponent<AudioSource>();
 
     }
+    private void knockBackIniciator(int number)
+    {
+        for (int i = 0; i < number; i++)
+        {
 
+            moveDirection = bossBody.transform.position - fongiBox.transform.position;
+            fongiBox.AddForce(moveDirection.normalized * impulsForce);
+
+        }
+    }
     private IEnumerator WaitAndLockRandom(float xWaitedSeconds)
     {
         yield return new WaitForSeconds(xWaitedSeconds);
@@ -43,17 +57,13 @@ public class bossMain : MonoBehaviour
 
     private IEnumerator EnablePhase2()
     {
-        if(hpCurrent <= 50)
-        {
-            moveDirection = bossBody.transform.position - fongiBox.transform.position;
-            fongiBox.AddForce(moveDirection.normalized * impulsForce, ForceMode2D.Impulse);
-            yield return new WaitForSeconds(0.5F);
-
-            isPhased = true;
-        } else
+        while (hpCurrent > 50)
         {
             yield return null;
         }
+
+        isPhased = true;
+
     }
 
     private IEnumerator KnockBack()
@@ -89,28 +99,33 @@ public class bossMain : MonoBehaviour
     
     public void TakeDamge(int damage)
     {
+        bossSounds.clip = soundHit;
+        bossSounds.Play();
         hpCurrent -= damage;
 
         if (hpCurrent <= 0 )
         {
+            StopAllCoroutines();
             Die();
         }
     }
 
     private void Die()
     {
-
+        bossSounds.clip = soundDeath;
+        bossSounds.Play();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        StartCoroutine("EnablePhase2");
     }
 
     // Update is called once per frame
     void Update()
     {
+        bossCollider.size = bossSprite.bounds.size / 2;
         if (hpCurrent > 0)
         {
             if (isPhased)
@@ -121,7 +136,6 @@ public class bossMain : MonoBehaviour
             }
             else
             {
-                StartCoroutine("EnablePhase2");
             }
         }
     }
