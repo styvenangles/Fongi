@@ -53,23 +53,25 @@
     <UnityVersion>2020.3.21f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_MouseRotation.cs" />
     <Compile Include="Assets\Boss\bossAttacks.cs" />
     <Compile Include="Assets\Fongi\Inventory.cs" />
     <Compile Include="Assets\Scenes\MainMenu.cs" />
     <Compile Include="Assets\Fongi\InputMap\fongiControls.cs" />
     <Compile Include="Assets\Fongi\fongiMain.cs" />
+    <Compile Include="Assets\Boss\bossEvents.cs" />
+    <Compile Include="Assets\Ultimate 10 Plus Shaders\Shaders\Plexus\Plexus.cs" />
     <Compile Include="Assets\Boss\bossMain.cs" />
     <Compile Include="Assets\Fongi\pickup.cs" />
-    <Compile Include="Assets\MobPatrol.cs" />
-    <Compile Include="Assets\Fongi\fongiAttack.cs" />
-    <Compile Include="Assets\Scenes\PauseMenu.cs" />
-    <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_MouseRotation.cs" />
-    <Compile Include="Assets\Ultimate 10 Plus Shaders\Shaders\Plexus\Plexus.cs" />
+    <Compile Include="Assets\Fongi\Camera.cs" />
     <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_SnowOverTime.cs" />
     <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_DissolveOverTime.cs" />
     <Compile Include="Assets\Ultimate 10 Plus Shaders\Scripts\U10PS_ExampleReview.cs" />
-    <Compile Include="Assets\Fongi\Camera.cs" />
-    <Compile Include="Assets\Boss\bossEvents.cs" />
+    <Compile Include="Assets\MobPatrol.cs" />
+    <Compile Include="Assets\Fongi\fongiAttack.cs" />
+    <Compile Include="Assets\Scenes\PauseMenu.cs" />
+    <Compile Include="Assets\Fongi\CameraManager.cs" />
+    <Compile Include="Assets\Fongi\CameraBoss.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Ultimate 10 Plus Shaders\Shaders\Edge Detection.shader" />

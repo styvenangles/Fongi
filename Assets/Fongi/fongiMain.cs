@@ -14,6 +14,8 @@ public class fongiMain : MonoBehaviour
     private Animator fongiAnims;
     private AudioSource fongiSounds;
 
+    [SerializeField] GameObject genericHit;
+
     [SerializeField] AudioClip soundSaut;
     [SerializeField] AudioClip soundDash;
 
@@ -32,7 +34,8 @@ public class fongiMain : MonoBehaviour
     private bool flipX = false;
     private bool isJumping = false;
     private bool hadDash = false;
-    private bool isIdle;
+    public bool isDead = false;
+    private bool isFixed = false;
 
     private void Awake()
     {
@@ -60,11 +63,14 @@ public class fongiMain : MonoBehaviour
         {
             flipX = true;
             fongiSprite.flipX = flipX;
+            genericHit.transform.position = new Vector3 (fongiBody.transform.position.x - 0.75F, fongiBody.transform.position.y + 0.5F, fongiBody.transform.position.z);
+
         }
         else if (moveValue > 0)
         {
             flipX = false;
             fongiSprite.flipX = flipX;
+            genericHit.transform.position = new Vector3(fongiBody.transform.position.x + 0.75F, fongiBody.transform.position.y + 0.5F, fongiBody.transform.position.z);
         }
     }
 
@@ -72,9 +78,12 @@ public class fongiMain : MonoBehaviour
     {
         if (hadDash == false)
         {
-            /*hadDash = true;
+            hadDash = true;
+            fongiSounds.clip = soundSaut;
+            fongiSounds.Play();
+            fongiAnims.SetBool("isDashing", true);
             transform.position += new Vector3(directionHeaded, 0) * dashPower;
-            Invoke("setDash", 1);*/
+            Invoke("setDash", 0.75F);
         }
     }
 
@@ -93,6 +102,7 @@ public class fongiMain : MonoBehaviour
     void setDash()
     {
         hadDash = false;
+        fongiAnims.SetBool("isDashing", false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -121,6 +131,22 @@ public class fongiMain : MonoBehaviour
         currentHp = maxHp;
         isMoving.x = transform.position.x;
     }
+    
+    public void TakeDamge(int damage)
+    {
+        currentHp -= damage;
+
+        if (currentHp <= 0)
+        {
+            isDead = true;
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        GameObject.Destroy(gameObject);
+    }
 
     // Update is called once per frame
     void Update()
@@ -129,21 +155,6 @@ public class fongiMain : MonoBehaviour
         directionHeaded = moveValue;
         transform.Translate(new Vector2(moveValue, 0) * moveSpeed * Time.deltaTime);
         fongiAnims.SetFloat("Speed", Mathf.Abs(directionHeaded));
-
-    }
-    public void TakeDamge(int damage)
-    {
-        currentHp -= damage;
-
-        if (currentHp <= 0)
-        {
-            Die();
-        }
-    }
-
-    private void Die()
-    {
-
     }
 
     private void FixedUpdate()

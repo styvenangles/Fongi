@@ -7,27 +7,29 @@ using Random = UnityEngine.Random;
 public class bossMain : MonoBehaviour
 {
     private SpriteRenderer bossSprite;
-    private Rigidbody2D bossBody;
-    private RaycastHit2D rayCastGen;
+    public Rigidbody2D bossBody;
     private BoxCollider2D bossCollider;
     private AudioSource bossSounds;
+    private GameObject bossA;
+    private bossAttacks bossAttacks;
 
-    [SerializeField] Rigidbody2D fongiBox;
+    [SerializeField] public Rigidbody2D fongiBox;
 
     [SerializeField] AudioClip soundHit;
     [SerializeField] AudioClip soundDeath;
 
     private float hpMax = 100;
     public float hpCurrent;
-    private float impulsForce = 5F;
-    private float hitCount = 1;
+    public float impulsForce = 100F;
+    private float hitCount = 0;
     private float timeRemaining = 3.00F;
-    private float rand;
 
-    private Vector3 moveDirection;
+    public Vector3 moveDirection;
 
-    private bool isPhased = false;
-    private bool randIsLocked = false;
+    public bool isPhased = false;
+    public bool isDead = false;
+    public bool knockActive = false;
+    private bool flipX = false;
 
     private void Awake()
     {
@@ -36,23 +38,40 @@ public class bossMain : MonoBehaviour
         bossBody = transform.GetComponent<Rigidbody2D>();
         bossCollider = transform.GetComponent<BoxCollider2D>();
         bossSounds = transform.GetComponent<AudioSource>();
+        bossA = GameObject.Find("Boss");
+        bossAttacks = bossA.GetComponent<bossAttacks>();
 
     }
-    private void knockBackIniciator(int number)
+    private void knockBackIniciator(bool state)
     {
-        for (int i = 0; i < number; i++)
+        if(state == true)
         {
-
-            moveDirection = bossBody.transform.position - fongiBox.transform.position;
-            fongiBox.AddForce(moveDirection.normalized * impulsForce);
-
+            knockActive = true;
         }
     }
-    private IEnumerator WaitAndLockRandom(float xWaitedSeconds)
+
+    private IEnumerator FlipAxe()
     {
-        yield return new WaitForSeconds(xWaitedSeconds);
-        randIsLocked = false;
-        
+        while (isDead != true)
+        {
+            if (transform.position.x < fongiBox.position.x)
+            {
+                flipX = true;
+                bossSprite.flipX = flipX; 
+                bossAttacks.attackPunchPoint.transform.position = new Vector3(bossBody.transform.position.x + 3.66F, bossBody.transform.position.y - 1.324F, bossBody.transform.position.z);
+                bossAttacks.attackVerticalPoint.transform.position = new Vector3(bossBody.transform.position.x + 4.6F, bossBody.transform.position.y - 0.96F, bossBody.transform.position.z);
+                yield return null;
+            }
+            else if (transform.position.x > fongiBox.position.x)
+            {
+                flipX = false;
+                bossSprite.flipX = flipX;
+                bossAttacks.attackPunchPoint.transform.position = new Vector3(bossBody.transform.position.x - 3.66F, bossBody.transform.position.y - 1.324F, bossBody.transform.position.z);
+                bossAttacks.attackVerticalPoint.transform.position = new Vector3(bossBody.transform.position.x - 4.6F, bossBody.transform.position.y - 0.96F, bossBody.transform.position.z);
+                yield return null;
+            }
+        }
+        yield return null;
     }
 
     private IEnumerator EnablePhase2()
@@ -68,43 +87,45 @@ public class bossMain : MonoBehaviour
 
     private IEnumerator KnockBack()
     {
-        timeRemaining -= Time.deltaTime;
-        if (randIsLocked == false)
+        while(knockActive == false)
         {
-            rand = Random.Range(0F, 100F);
-            if (rand > 95.99F)
-            {
-                moveDirection = bossBody.transform.position - fongiBox.transform.position;
-                fongiBox.AddForce(moveDirection.normalized * impulsForce, ForceMode2D.Impulse);
-                Debug.Log("Pushed by Luck!!!");
-                yield return new WaitForSeconds(2F);
-                /*randIsLocked = true;*/
-/*                StartCoroutine(WaitAndLockRandom(0.5F));
-*/            }
+            yield return null;
         }
-        if (timeRemaining < 0)
-        {
-            timeRemaining = 3.00F;
-            hitCount = 1;
-        } else if (hitCount > 3)
-        {
-            moveDirection = bossBody.transform.position - fongiBox.transform.position;
-            fongiBox.AddForce(moveDirection.normalized * impulsForce, ForceMode2D.Impulse);
-            Debug.Log("Pushed by hits!!");
-            yield return new WaitForSeconds(0.5F);
-/*            hitCount = 1;
-*/        }
-        yield return null;
+
+        moveDirection = fongiBox.transform.position - bossBody.transform.position;
+        moveDirection.z = 0;
+        fongiBox.AddForce(moveDirection.normalized * impulsForce, ForceMode2D.Impulse);
+
     }
     
     public void TakeDamge(int damage)
     {
         bossSounds.clip = soundHit;
         bossSounds.Play();
-        hpCurrent -= damage;
+
+        timeRemaining -= Time.deltaTime;
+
+        if (timeRemaining <= 0F)
+        {
+            timeRemaining = 3.00F;
+            hitCount = 0;
+        }
+        else if (hitCount < 2)
+        {
+            hpCurrent -= damage;
+            hitCount++;
+        }
+        else
+        {
+            moveDirection = fongiBox.transform.position - bossBody.transform.position;
+            moveDirection.z = 0;
+            fongiBox.AddForce(moveDirection.normalized * impulsForce, ForceMode2D.Impulse);
+            hitCount = 0;
+        }
 
         if (hpCurrent <= 0 )
         {
+            isDead = true;
             StopAllCoroutines();
             Die();
         }
@@ -112,6 +133,7 @@ public class bossMain : MonoBehaviour
 
     private void Die()
     {
+        GameObject.Destroy(gameObject);
         bossSounds.clip = soundDeath;
         bossSounds.Play();
     }
@@ -120,23 +142,19 @@ public class bossMain : MonoBehaviour
     void Start()
     {
         StartCoroutine("EnablePhase2");
+        StartCoroutine("KnockBack");
+        StartCoroutine("FlipAxe");
     }
 
     // Update is called once per frame
     void Update()
     {
         bossCollider.size = bossSprite.bounds.size / 2;
-        if (hpCurrent > 0)
+
+        if (isPhased)
         {
-            if (isPhased)
-            {
-                StopCoroutine("EnablePhase2");
-                StartCoroutine("KnockBack");
-                bossSprite.color = Color.red;
-            }
-            else
-            {
-            }
+            StopCoroutine("EnablePhase2");
+            knockBackIniciator(true);
         }
     }
 }

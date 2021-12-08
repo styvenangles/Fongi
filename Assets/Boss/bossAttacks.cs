@@ -5,107 +5,146 @@ using Random = UnityEngine.Random;
 
 public class bossAttacks : MonoBehaviour
 {
-    private Transform attackPunchPoint;
-    private Transform attackVerticalPoint;
+    [SerializeField] public Transform attackPunchPoint;
+    [SerializeField] public Transform attackVerticalPoint;
+
     private LayerMask playerLayer;
     private AudioSource bossSounds;
-
-    private Coroutine co;
+    private Animator bossAnims;
+    private GameObject bossM;
+    private bossMain bossMain;
+    private GameObject fongi;
+    private fongiMain fongiMain;
 
     [SerializeField] AudioClip soundStomp;
     [SerializeField] AudioClip soundPunch;
 
     private int attackDamage;
-    private float randTryAttack;
-    private float randWhichHit;
-    private bool canAttack = true;
+    public float randWhichHit;
+    private float missCount = 1;
+    private Vector2 inRange;
     private bool isRandLock = false;
+    public bool isActive;
 
     private void Awake()
     {
         playerLayer = LayerMask.GetMask("Fongi");
-        attackPunchPoint = GameObject.Find("PunchHit").transform;
-        attackVerticalPoint = GameObject.Find("VerticalHit").transform;
         bossSounds = transform.GetComponent<AudioSource>();
+        bossAnims = transform.GetComponent<Animator>();
+        bossM = GameObject.Find("Boss");
+        bossMain = bossM.GetComponent<bossMain>();
+        fongi = GameObject.Find("Fongi2");
+        fongiMain = fongi.GetComponent<fongiMain>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        StartCoroutine("TryAttack");
     }
 
-    private void TryAttack(float randWhichAttack)
+    private IEnumerator TryAttack()
     {
-        if (canAttack)
+        while (!bossMain.isDead)
         {
-            if (randWhichHit >= 31F)
+            while (isActive == false)
             {
-                bossSounds.clip = soundPunch;
-                bossSounds.Play();
-                Vector3 attackRange = new Vector3(1.5F, 1, 0);
-                attackDamage = 10;
-                co = StartCoroutine(performAttack(attackPunchPoint, attackRange, attackDamage, 3.5F));
-            } else
-            {
-                bossSounds.clip = soundStomp;
-                bossSounds.Play();
-                Vector3 attackRange = new Vector3(2, 2, 0);
-                attackDamage = 10;
-                co = StartCoroutine(performAttack(attackVerticalPoint, attackRange, attackDamage, 4F));
+                yield return null;
             }
-        } else
-        {
-            StopCoroutine(co);
-            canAttack = !canAttack;
-        }
-    }
-
-    private IEnumerator performAttack(Transform attackPoint, Vector3 attackRange, int attackDamage, float waitTime)
-    {
-        canAttack = !canAttack;
-        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.position, attackRange, playerLayer);
-
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            if (enemy.CompareTag("Fongi"))
+            StartCoroutine(randOrg(0F, 100F));
+            if (isRandLock)
             {
-                Debug.Log(attackPoint.name);
-                enemy.GetComponent<fongiMain>().TakeDamge(attackDamage);
+                if (randWhichHit >= 95F)
+                {
+                    bossMain.moveDirection = bossMain.fongiBox.transform.position - bossMain.bossBody.transform.position;
+                    bossMain.moveDirection.z = 0;
+                    bossMain.fongiBox.AddForce(bossMain.moveDirection.normalized * bossMain.impulsForce, ForceMode2D.Impulse);
+                    yield return new WaitForSeconds(3F);
+                }
+                else if (randWhichHit >= 31F)
+                {
+                    bossSounds.clip = soundPunch;
+                    bossSounds.Play();
+                    Vector3 attackRange = new Vector3(3.5F, 2, 0);
+                    attackDamage = 10;
+                    performAttack(attackPunchPoint, attackRange, attackDamage);
+                    yield return new WaitForSeconds(3F);
+                }
+                else
+                {
+                    bossAnims.SetBool("isStomping", true);
+                    bossSounds.clip = soundStomp;
+                    bossSounds.Play();
+                    Vector3 attackRange = new Vector3(4, 9, 0);
+                    attackDamage = 10;
+                    performAttack(attackVerticalPoint, attackRange, attackDamage);
+                    yield return new WaitForSeconds(1F);
+                    bossAnims.SetBool("isStomping", false);
+                    yield return new WaitForSeconds(3F);
+                }
+                isRandLock = false;
             } else
             {
                 yield return null;
             }
         }
-        yield return new WaitForSeconds(waitTime);
+        yield return null;
+    }
+
+    private void performAttack(Transform attackPoint, Vector3 attackRange, int attackDamage)
+    {
+        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(attackPoint.position, attackRange, playerLayer);
+        inRange = bossMain.bossBody.transform.position - bossMain.fongiBox.transform.position;
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            if (missCount >= 3 && (inRange.x > - 5F && inRange.x < 5F))
+            {
+                bossMain.moveDirection = bossMain.fongiBox.transform.position - bossMain.bossBody.transform.position;
+                bossMain.moveDirection.z = 0;
+                bossMain.fongiBox.AddForce(bossMain.moveDirection.normalized * bossMain.impulsForce, ForceMode2D.Impulse);
+                fongiMain.TakeDamge(5);
+                missCount = 0;
+
+            }
+            else if (enemy.CompareTag("Fongi"))
+            {
+                fongiMain.TakeDamge(attackDamage);
+                if (missCount > 0)
+                {
+                    missCount--;
+                }
+                else
+                {
+                    return;
+                }
+            } else
+            {
+                missCount++;
+            }
+        }
     }
 
    private IEnumerator randOrg(float lowRange, float highRange)
     {
-        randTryAttack = Random.Range(lowRange, highRange);
-        randWhichHit = Random.Range(lowRange, highRange);
-        yield return new WaitForSeconds(2F);
+        while (!bossMain.isDead)
+        {
+            randWhichHit = Random.Range(lowRange, highRange);
+            isRandLock = true;
+            yield return new WaitForSeconds(3F);
+        }
+
+        yield return null;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isRandLock == false)
-        {
-            StartCoroutine(randOrg(0F, 100F));
-           /* Debug.Log(randTryAttack);
-            Debug.Log(randTryAttack <= 5F);*/
-            if (randTryAttack <= 5F)
-            {
-/*                isRandLock = !isRandLock;
-*/                TryAttack(randWhichHit);
-            }
 
-        }
-        else
-        {
-            return; 
-        }
+    }
+
+    private void FixedUpdate()
+    {
+
     }
 
     private void OnDrawGizmosSelected()
